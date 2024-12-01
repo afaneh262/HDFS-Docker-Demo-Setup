@@ -1,0 +1,111 @@
+version: '3'
+
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    environment:
+      - CLUSTER_NAME=test
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+      - HDFS_CONF_dfs_replication=3
+    ports:
+      - 9870:9870
+      - 8020:8020
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9870"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - hadoop_network
+
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode1
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - SERVICE_PRECONDITION=namenode:9870
+    ports:
+      - 9864:9864
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+    networks:
+      - hadoop_network
+    depends_on:
+      - namenode
+
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode2
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - SERVICE_PRECONDITION=namenode:9870
+    ports:
+      - 9865:9864
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+    networks:
+      - hadoop_network
+    depends_on:
+      - namenode
+
+  datanode3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode3
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - SERVICE_PRECONDITION=namenode:9870
+    ports:
+      - 9866:9864
+    volumes:
+      - hadoop_datanode3:/hadoop/dfs/data
+    networks:
+      - hadoop_network
+    depends_on:
+      - namenode
+
+  datanode4:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode4
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - SERVICE_PRECONDITION=namenode:9870
+    ports:
+      - 9867:9864
+    volumes:
+      - hadoop_datanode4:/hadoop/dfs/data
+    networks:
+      - hadoop_network
+    depends_on:
+      - namenode
+
+  datanode5:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode5
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - SERVICE_PRECONDITION=namenode:9870
+    ports:
+      - 9868:9864
+    volumes:
+      - hadoop_datanode5:/hadoop/dfs/data
+    networks:
+      - hadoop_network
+    depends_on:
+      - namenode
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode1:
+  hadoop_datanode2:
+  hadoop_datanode3:
+  hadoop_datanode4:
+  hadoop_datanode5:
+
+networks:
+  hadoop_network:
+    driver: bridge
